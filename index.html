@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>H.B.D. PING</title>
   <style>
-    body{margin:0;font-family:sans-serif;background:#fff;color:#000;display:flex;justify-content:center;align-items:center;min-height:100vh;}
-    .card{text-align:center;max-width:700px;padding:20px;}
+    body{margin:0;font-family:sans-serif;background:#fff;color:#000;display:flex;justify-content:center;align-items:center;min-height:100vh;overflow:hidden;}
+    .card{text-align:center;max-width:700px;padding:20px;z-index:10;}
     h1{font-size:3rem;margin-bottom:20px;}
     img{width:300px;height:auto;margin-bottom:20px;border:3px solid #000;}
     p{font-size:1.2rem;line-height:1.6;}
@@ -19,9 +19,23 @@
       background:#ff4081;
       color:#fff;
       border-radius:8px;
+      z-index:10;
+      position:relative;
     }
     button:hover{background:#e73370;}
-    canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;}
+    canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;}
+    .heart{
+      position:fixed;
+      font-size:2rem;
+      color:red;
+      animation: floatUp 3s linear forwards;
+      pointer-events:none;
+      z-index:5;
+    }
+    @keyframes floatUp {
+      0% {transform: translateY(0) scale(1); opacity:1;}
+      100% {transform: translateY(-200px) scale(1.5); opacity:0;}
+    }
   </style>
 </head>
 <body>
@@ -29,21 +43,19 @@
     <h1>H.B.D. PING</h1>
     <img src="https://scontent.fbkk7-3.fna.fbcdn.net/v/t39.30808-6/474992156_1148160273366311_7509973891333081587_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=a5f93a&_nc_eui2=AeGMpDV-oWPjE9z6WYWewSLO8vV_NIoYtADy9X80ihi0ADzixO0t7zAPCvw7r-lj4FckaFI_Tceh8_TrvLa8ryb7&_nc_ohc=n4KbN21YgOoQ7kNvwFgdXhz&_nc_oc=AdlVdBFe9cSBO-5gJnUNuf2fdmJJwb7peO_WOwjAUcNpmvTcQp_cQtObi5g_lKZoXlw&_nc_zt=23&_nc_ht=scontent.fbkk7-3.fna&_nc_gid=5HdA3A-KVQkj-a-xA07F8A&oh=00_AfZrfS3YAuTqVJrqOAZ7AZdPo41ZDRwEHdVz0zpLd2CTeQ&oe=68D807F8" alt="รูปคุณปิ๊ง">
     <p>แฮปปี้เบิร์ดเดย์นะครับคุณปิ๊ง โตขึ้นอีกปีแล้วนะ แล้วก็สำหรับปีนี้แล้วทุกๆปีเนี่ย ขอให้คุณปิ๊งมีความสุขมากๆในทุกปีนะครับ แล้วก็ดูแลตัวเองดีๆด้วย ช่วงนี้ฝนตกบ่อย เดี๋ยวเป็นไข้ แล้วก็รักนะครับคุณปิ๊ง ❤</p>
-    <button onclick="startConfetti()">กดปุ่มเพื่อแฮปปี้เบิร์ดเดย์ 🎉</button>
+    <button onclick="startCelebration()">กดปุ่มเพื่อแฮปปี้เบิร์ดเดย์ 🎉</button>
   </div>
   <canvas id="confetti"></canvas>
 
   <script>
+    // --- confetti setup ---
     const canvas = document.getElementById('confetti');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
     const particles = [];
-
-    function random(min, max) {
-      return Math.random() * (max - min) + min;
-    }
+    function random(min, max) { return Math.random() * (max - min) + min; }
 
     function createParticles() {
       for (let i = 0; i < 150; i++) {
@@ -65,7 +77,6 @@
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
         ctx.fill();
-
         p.y += p.speed;
         p.x += Math.sin(p.angle);
         if (p.y > canvas.height) {
@@ -84,6 +95,30 @@
         animation = requestAnimationFrame(loop);
       }
       loop();
+    }
+
+    // --- hearts floating ---
+    function createHeart() {
+      const heart = document.createElement("div");
+      heart.classList.add("heart");
+      heart.innerHTML = "❤";
+      heart.style.left = Math.random() * window.innerWidth + "px";
+      heart.style.top = (window.innerHeight - 50) + "px";
+      document.body.appendChild(heart);
+
+      setTimeout(() => heart.remove(), 3000);
+    }
+
+    function startHearts() {
+      for (let i = 0; i < 10; i++) {
+        setTimeout(createHeart, i * 300);
+      }
+    }
+
+    // --- main celebration ---
+    function startCelebration() {
+      startConfetti(); // ยิง confetti
+      startHearts();   // ปล่อยหัวใจลอย
     }
 
     window.addEventListener('resize', () => {
